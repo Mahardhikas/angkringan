@@ -12,9 +12,8 @@ export default function Hero() {
                 </p>
                 <div className="flex gap-4 text-sm">
                     <Link href={'/menu'} className="gap-2">
-                    <button className="bg-orange-600 uppercase items-center flex gap-2 text-white px-4 py-2 rounded-full">Order now <Right/></button>
+                    <button className="bg-orange-600 uppercase items-center flex gap-2 text-white px-4 py-2 rounded-full">Pesan Sekarang <Right/></button>
                     </Link>
-                    <button className="flex gap-2 py-2 text-gray-600 font-semibold items-center boorder-gray-400">Learn More <Right/></button>
                 </div>
             </div>
             <div className="relative w-48 h-48 mx-auto my-auto">

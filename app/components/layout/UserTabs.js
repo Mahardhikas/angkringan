@@ -10,7 +10,7 @@ export default function UserTabs({isAdmin, isOwner}) {
             className={path === '/profile' ? 'active' : ''}
             href={'/profile'}
           >
-            Profile
+            Data Diri
           </Link>
       {isAdmin && (
         <>
@@ -30,7 +30,7 @@ export default function UserTabs({isAdmin, isOwner}) {
             className={path === '/orders' ? 'active' : ''}
             href={'/orders'}
           >
-            Orders
+            Pesanan
           </Link>
         </>
       )}
@@ -40,13 +40,13 @@ export default function UserTabs({isAdmin, isOwner}) {
             className={path.includes('/users') ? 'active' : ''}
             href={'/users'}
           >
-            Users
+            Pengguna
           </Link>
           <Link
           className={path.includes('/report') ? 'active' : ''}
           href={'/report'}
           >
-            Report
+            Laporan
           </Link>
         </>
       )}

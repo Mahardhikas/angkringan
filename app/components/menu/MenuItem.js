@@ -73,7 +73,7 @@ export default function MenuItem(menuItem) {
               </p>
               {sizes?.length > 0 && (
                 <div className="py-2">
-                  <h3 className="text-center text-gray-700">Pick your size</h3>
+                  <h3 className="text-center text-gray-700">Ukuran</h3>
                   {sizes.map(size => (
                     <label
                       key={size._id}
@@ -90,7 +90,7 @@ export default function MenuItem(menuItem) {
               )}
               {extraIngredientPrices?.length > 0 && (
                 <div className="py-2">
-                  <h3 className="text-center text-gray-700">Any extras?</h3>
+                  <h3 className="text-center text-gray-700">Tambahan Topping?</h3>
                   {extraIngredientPrices.map(extraThing => (
                     <label
                       key={extraThing._id}

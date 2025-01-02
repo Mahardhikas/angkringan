@@ -41,7 +41,7 @@ export default function UserPage() {
                         </div>
                         <div>
                             <Link className="button" href={'/users/'+user._id}>
-                                Edit
+                                Ubah
                             </Link>
                         </div>
                     </div>

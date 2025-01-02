@@ -66,10 +66,9 @@ export default function Header() {
         <div
           onClick={() => setMobileNavOpen(false)}
           className="md:hidden p-4 bg-gray-200 rounded-lg mt-2 flex flex-col gap-2 text-center">
-          <Link href={'/'}>Home</Link>
+          <Link href={'/'}>Beranda</Link>
           <Link href={'/menu'}>Menu</Link>
-          <Link href={'/#about'}>About</Link>
-          <Link href={'/#contact'}>Contact</Link>
+          <Link href={'/#contact'}>Kontak</Link>
           <AuthLinks status={status} userName={userName} />
         </div>
       )}
@@ -78,10 +77,9 @@ export default function Header() {
           <Link className="text-orange-500 font-semibold text-2xl" href={'/'}>
             Angkringan Umi
           </Link>
-          <Link href={'/'}>Home</Link>
+          <Link href={'/'}>Beranda</Link>
           <Link href={'/menu'}>Menu</Link>
-          <Link href={'/#about'}>About</Link>
-          <Link href={'/#contact'}>Contact</Link>
+          <Link href={'/#contact'}>Kontak</Link>
         </nav>
         <nav className="flex items-center gap-4 text-gray-500 font-semibold">
           <AuthLinks status={status} userName={userName} />

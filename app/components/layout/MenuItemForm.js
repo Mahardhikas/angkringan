@@ -38,7 +38,7 @@ export default function MenuItemForm({onSubmit,menuItem}) {
           <EditableImage link={image} setLink={setImage} />
         </div>
         <div className="grow">
-          <label>Nama Item</label>
+          <label>Nama Produk</label>
           <input
             type="text"
             value={name}
@@ -62,12 +62,12 @@ export default function MenuItemForm({onSubmit,menuItem}) {
             value={basePrice}
             onChange={ev => setBasePrice(ev.target.value)}
           />
-          <MenuItemPriceProps name={'Sizes'}
-                              addLabel={'Add item size'}
+          <MenuItemPriceProps name={'Ukuran'}
+                              addLabel={'Tambah ukuran produk'}
                               props={sizes}
                               setProps={setSizes} />
-          <MenuItemPriceProps name={'Extra ingredients'}
-                              addLabel={'Add ingredients prices'}
+          <MenuItemPriceProps name={'Topping tambahan'}
+                              addLabel={'Topping tambahan'}
                               props={extraIngredientPrices}
                               setProps={setExtraIngredientPrices}/>
           <button type="submit">Save</button>

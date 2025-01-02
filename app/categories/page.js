@@ -89,7 +89,7 @@ export default function CategoriesPage() {
           <div className="flex gap-2 items-end">
             <div className="grow">
               <label>
-                {editedCategory ? 'Update category' : 'Nama Kategori Baru'}
+                {editedCategory ? 'Pembaruan Kategori' : 'Nama Kategori Baru'}
                 {editedCategory && (
                   <>: <b>{editedCategory.name}</b></>
                 )}
@@ -101,7 +101,7 @@ export default function CategoriesPage() {
             </div>
             <div className="pb-2 flex gap-2">
               <button className="border border-primary" type="submit">
-                {editedCategory ? 'Update' : 'Create'}
+                {editedCategory ? 'Pembaruan' : 'Buat'}
               </button>
               <button
                 type="button"
@@ -130,10 +130,10 @@ export default function CategoriesPage() {
                           setCategoryName(c.name);
                         }}
                 >
-                  Edit
+                  Ubah
                 </button>
                 <DeleteButton
-                  label="Delete"
+                  label="Hapus"
                   onDelete={() => handleDeleteClick(c._id)} />
               </div>
             </div>

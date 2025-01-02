@@ -1,4 +1,4 @@
-import {model, models, Schema} from "mongoose";
+import { model, models, Schema } from "mongoose";
 
 const OrderSchema = new Schema({
   noMeja: String,
@@ -11,8 +11,8 @@ const OrderSchema = new Schema({
   country: String,
   cartProducts: Object,
   harga: Number,
-  paid: {type: Boolean, default: true},
-  
-}, {timestamps: true});
+  paymentStatus: { type: String, default: 'pending' },
+  orderStatus: { type: String, default: '' },  // Tambahkan ini
+}, { timestamps: true });
 
 export const Order = models?.Order || model('Order', OrderSchema);

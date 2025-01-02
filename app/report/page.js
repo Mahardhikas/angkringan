@@ -1,48 +1,91 @@
-'use client';
+'use client'
+import { useEffect, useState } from "react";
 import UserTabs from "../components/layout/UserTabs";
-import {useProfile} from "../components/UseProfile";
-import {dbTimeForHuman} from "../../libs/datetime";
-import {useEffect, useState} from "react";
+import { useProfile } from "../components/UseProfile";
+import { dbTimeForHuman } from "../../libs/datetime";
 import OwnerTabs from "../components/layout/OwnerTabs";
+import ProductLineChart from "../components/layout/ProductLineChart"; // Import the Line Chart Component
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
-  const {loading, data: profile} = useProfile();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [orderQuery, setOrderQuery] = useState('');
+  const { loading, data: profile } = useProfile();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [productData, setProductData] = useState([]); // State for product data for the chart
+  const [totalOmset, setTotalOmset] = useState(0); // State for total omset
 
   useEffect(() => {
     fetchOrders();
   }, []);
 
-  function fetchOrders(startDate = '', endDate = '') {
+  function fetchOrders(startDate = '', endDate = '', searchQuery = '', orderQuery = '') {
     setLoadingOrders(true);
     let url = '/api/orders';
-    if (startDate && endDate) {
-      url += `?startDate=${startDate}&endDate=${endDate}`;
-    }
-    console.log("Fetching orders with URL:", url); // Debug log
+    const queryParams = new URLSearchParams();
+    if (startDate) queryParams.append('startDate', startDate);
+    if (endDate) queryParams.append('endDate', endDate);
+    if (searchQuery) queryParams.append('search', searchQuery);
+    if (orderQuery) queryParams.append('order', orderQuery);
+    if (queryParams.toString()) url += `?${queryParams.toString()}`;
+    
     fetch(url)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(orders => {
-        console.log("Orders fetched: ", orders); // Debug log
         setOrders(orders.reverse());
+        calculateProductData(orders); // Calculate product data for the chart
+        calculateTotalOmset(orders); // Calculate total omset
         setLoadingOrders(false);
       })
       .catch(error => {
-        console.error("Error fetching orders:", error); // Debug log
+        console.error("Error fetching orders:", error);
         setLoadingOrders(false);
       });
-  }  
+  }
+
+  function calculateProductData(orders) {
+    const productMap = new Map();
+
+    orders.forEach(order => {
+      order.cartProducts.forEach(product => {
+        if (productMap.has(product.name)) {
+          productMap.set(product.name, productMap.get(product.name) + 1);
+        } else {
+          productMap.set(product.name, 1);
+        }
+      });
+    });
+
+    const productDataArray = Array.from(productMap.entries()).map(([name, count]) => ({ name, count }));
+    setProductData(productDataArray);
+  }
+
+  function calculateTotalOmset(orders) {
+    const total = orders.reduce((sum, order) => {
+      let subtotal = 0;
+      if (order?.cartProducts) {
+        for (const product of order.cartProducts) {
+          subtotal += cartProductPrice(product);
+        }
+      }
+      return sum + subtotal;
+    }, 0);
+    setTotalOmset(total);
+  }
 
   function cartProductPrice(product) {
-    console.log("Product: ", product); // Log untuk cek data produk
-    return product.basePrice * (product.quantity || 1); // Gunakan basePrice dan quantity
+    return product.basePrice * (product.quantity || 1);
   }
 
   function handleFilter() {
-    fetchOrders(startDate, endDate);
+    fetchOrders(startDate, endDate, searchQuery, orderQuery);
   }
 
   return (
@@ -50,9 +93,11 @@ export default function OrdersPage() {
       <div className="my-2">
         <UserTabs isAdmin={profile.admin} isOwner={profile.owner} />
       </div>
-        <OwnerTabs isOwner={profile.owner} />
+      <OwnerTabs isOwner={profile.owner} />
       <div className="mt-8">
+        {/* Your existing filters and table */}
         <div className="flex mb-4">
+          {/* Inputs for filters */}
           <input 
             type="date" 
             value={startDate} 
@@ -65,12 +110,28 @@ export default function OrdersPage() {
             onChange={(e) => setEndDate(e.target.value)} 
             className="border py-2 px-4 mr-2"
           />
+          <input 
+            type="text" 
+            value={searchQuery} 
+            onChange={(e) => setSearchQuery(e.target.value)} 
+            placeholder="Nama" 
+            className="border py-2 px-4 mr-2"
+          />
+          <input 
+            type="text" 
+            value={orderQuery} 
+            onChange={(e) => setOrderQuery(e.target.value)} 
+            placeholder="Produk" 
+            className="border py-2 px-4 mr-2"
+          />
           <button 
             onClick={handleFilter} 
             className="bg-blue-500 text-white py-2 px-4">
             Filter
           </button>
         </div>
+        
+        {/* Existing orders table */}
         {loadingOrders ? (
           <div>Loading report...</div>
         ) : (
@@ -92,7 +153,6 @@ export default function OrdersPage() {
                       subtotal += cartProductPrice(product);
                     }
                   }
-                  console.log("Order subtotal: ", subtotal); // Log untuk cek subtotal
                   return (
                     <tr key={order._id}>
                       <td className="py-2 px-4 border-b text-center">{order.nama}</td>
@@ -111,6 +171,14 @@ export default function OrdersPage() {
           </table>
         )}
       </div>
+        {/* Display total omset */}
+        <div className="mb-4">
+          <strong>Total Omset:</strong> Rp.{totalOmset}
+        </div>      
+      {/* Line Chart for Most Purchased Products */}
+      <div className="mt-8">
+          <ProductLineChart productData={productData} />
+        </div>
     </section>
   );
 }

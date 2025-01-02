@@ -1,9 +1,9 @@
 'use client';
+import { useEffect, useState } from "react";
 import UserTabs from "../../components/layout/UserTabs";
 import { useProfile } from "../../components/UseProfile";
-import { dbTimeForHuman } from "../../../libs/datetime";
-import { useEffect, useState } from "react";
 import OwnerTabs from "../../components/layout/OwnerTabs";
+import ProductLineChart from "../../components/layout/ProductLineChart"; // Import the Line Chart Component
 
 // Fungsi untuk mendapatkan minggu dari tanggal
 function getWeekNumber(date) {
@@ -34,6 +34,7 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [totalOverall, setTotalOverall] = useState(0);
+  const [productData, setProductData] = useState([]); // State for product data for the chart
   const { loading, data: profile } = useProfile();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -48,11 +49,9 @@ export default function OrdersPage() {
     if (startDate && endDate) {
       url += `?startDate=${startDate}&endDate=${endDate}`;
     }
-    console.log("Fetching orders with URL:", url); // Debug log
     fetch(url)
       .then(res => res.json())
       .then(orders => {
-        console.log("Orders fetched: ", orders); // Debug log
         const weeklyData = groupOrdersByWeek(orders);
         setOrders(weeklyData);
 
@@ -60,10 +59,13 @@ export default function OrdersPage() {
         const total = weeklyData.reduce((sum, week) => sum + week.total, 0);
         setTotalOverall(total);
 
+        // Calculate product data for the chart
+        calculateProductData(orders);
+
         setLoadingOrders(false);
       })
       .catch(error => {
-        console.error("Error fetching orders:", error); // Debug log
+        console.error("Error fetching orders:", error);
         setLoadingOrders(false);
       });
   }
@@ -99,9 +101,25 @@ export default function OrdersPage() {
     return Object.values(grouped);
   }
 
+  function calculateProductData(orders) {
+    const productMap = new Map();
+
+    orders.forEach(order => {
+      order.cartProducts.forEach(product => {
+        if (productMap.has(product.name)) {
+          productMap.set(product.name, productMap.get(product.name) + 1);
+        } else {
+          productMap.set(product.name, 1);
+        }
+      });
+    });
+
+    const productDataArray = Array.from(productMap.entries()).map(([name, count]) => ({ name, count }));
+    setProductData(productDataArray);
+  }
+
   function cartProductPrice(product) {
-    console.log("Product: ", product); // Log untuk cek data produk
-    return product.basePrice * (product.quantity || 1); // Gunakan basePrice dan quantity
+    return product.basePrice * (product.quantity || 1);
   }
 
   function handleFilter() {
@@ -137,12 +155,12 @@ export default function OrdersPage() {
           <button 
             onClick={() => handleWeekFilter('this')} 
             className="bg-blue-500 text-white py-2 px-4 mr-2">
-            This Week
+            Minggu ini
           </button>
           <button 
             onClick={() => handleWeekFilter('last')} 
             className="bg-blue-500 text-white py-2 px-4 mr-2">
-            Last Week
+            Minggu Terakhir
           </button>
           <input 
             type="date" 
@@ -158,12 +176,12 @@ export default function OrdersPage() {
           />
           <button 
             onClick={handleFilter} 
-            className="bg-blue-500 text-white py-2 px-4 items-center">
+            className="bg-blue-500 text-white py-2 px-4">
             Filter
           </button>
         </div>
         {loadingOrders ? (
-          <div>Loading report...</div>
+          <div>Loading laporen...</div>
         ) : (
           <table className="min-w-full bg-white">
             <thead>
@@ -197,6 +215,10 @@ export default function OrdersPage() {
             </tfoot>
           </table>
         )}
+        {/* Display the chart */}
+        <div className="mt-8">
+          <ProductLineChart productData={productData} />
+        </div>
       </div>
     </section>
   );

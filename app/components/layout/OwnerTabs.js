@@ -13,13 +13,13 @@ export default function OwnerTabs({ isAdmin, isOwner }) {
             className={path === '/report' ? 'active' : ''}
             href={'/report'}
           >
-            Daily
+            Harian
           </Link>
           <Link
             className={path === '/report/report-weekly' ? 'active' : ''}
             href={'/report/report-weekly'}
           >
-            Weekly
+            Mingguan
           </Link>
         </>
       )}
