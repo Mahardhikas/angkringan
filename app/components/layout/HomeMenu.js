@@ -22,9 +22,9 @@ export default function HomeMenu(){
                 />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {bestSellers?.length > 0 && bestSellers.map(item => (
-                    <MenuItem  {...item} />
-                ))}
+            {bestSellers?.length > 0 && bestSellers.map(item => (
+                <MenuItem key={item.id} {...item} />
+            ))}
             </div>
         </section>
     )
